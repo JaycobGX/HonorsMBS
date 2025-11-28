@@ -82,13 +82,13 @@ function MovieForm({ initial, onSave, onCancel }: { initial?: any, onSave: (m:an
 
   return (
     <div style={{marginTop:8, display:"flex", flexDirection:"column", gap:8}}>
-      <input style={{padding:8}} placeholder="Title" value={form.title} onChange={e=>setForm({...form, title:e.target.value})} />
-      <input style={{padding:8}} placeholder="Genre" value={form.genre} onChange={e=>setForm({...form, genre:e.target.value})} />
-      <input style={{padding:8}} placeholder="Duration" value={form.duration} onChange={e=>setForm({...form, duration:e.target.value})} />
-      <input style={{padding:8}} placeholder="Cast (comma-separated)" value={form.cast} onChange={e=>setForm({...form, cast:e.target.value})} />
-      <input style={{padding:8}} placeholder="Image URL" value={form.posterUrl} onChange={e=>setForm({...form, posterUrl:e.target.value})} />
-      <textarea style={{padding:8}} placeholder="Synopsis" value={form.description} onChange={e=>setForm({...form, description:e.target.value})} />
-      <select value={form.status} onChange={e=>setForm({...form, status:e.target.value})} style={{padding:8}}>
+      <input style={{padding:8, width:"900px"}} placeholder="Title" value={form.title} onChange={e=>setForm({...form, title:e.target.value})} />
+      <input style={{padding:8, width:"900px"}} placeholder="Genre" value={form.genre} onChange={e=>setForm({...form, genre:e.target.value})} />
+      <input style={{padding:8, width:"900px"}} placeholder="Duration" value={form.duration} onChange={e=>setForm({...form, duration:e.target.value})} />
+      <input style={{padding:8, width:"900px"}} placeholder="Cast (comma-separated)" value={form.cast} onChange={e=>setForm({...form, cast:e.target.value})} />
+      <input style={{padding:8, width:"900px"}} placeholder="Image URL" value={form.posterUrl} onChange={e=>setForm({...form, posterUrl:e.target.value})} />
+      <textarea style={{padding:8, width:"900px"}} placeholder="Synopsis" value={form.description} onChange={e=>setForm({...form, description:e.target.value})} />
+      <select value={form.status} onChange={e=>setForm({...form, status:e.target.value})} style={{padding:8, width:"900px"}}>
         <option value="current">current</option>
         <option value="upcoming">upcoming</option>
       </select>

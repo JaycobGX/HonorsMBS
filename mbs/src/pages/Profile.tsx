@@ -91,7 +91,7 @@ export default function Profile() {
 
   const pageStyle: React.CSSProperties = {
     padding: "20px",
-    maxWidth: "900px",
+    width: "98vw",
     margin: "0 auto",
   };
 

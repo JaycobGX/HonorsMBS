@@ -15,12 +15,22 @@ export default function AdminDashboard() {
 
   // --- Inline Styles ---
   const container: React.CSSProperties = {
-    padding: 20,
-    maxWidth: 1100,
+    padding: "20px",
+    width: "98vw",
+    minHeight: "100vh",
     margin: "0 auto",
     fontFamily: "Arial"
   };
-
+  // const pageStyle: React.CSSProperties = {
+  //   minHeight: "100vh",
+  //   width: "98vw",
+  //   padding: "20px",
+  //   boxSizing: "border-box",
+  //   backgroundColor: "#f5f5f5",
+  //   display: "flex",
+  //   flexDirection: "column",
+  //   alignItems: "center",
+  // };
   const navStyle: React.CSSProperties = {
     display: "flex",
     gap: 12,

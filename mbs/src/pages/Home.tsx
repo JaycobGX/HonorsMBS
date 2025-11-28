@@ -1,12 +1,21 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { db } from "../firebase/db";
 import type { Movie } from "../types/Movie";
 import MovieCard from "../components/MovieCard";
 import { collection, getDocs, query, where } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
   const [currentMovies, setCurrentMovies] = useState<Movie[]>([]);
   const [upcomingMovies, setUpcomingMovies] = useState<Movie[]>([]);
+  const [allMovies, setAllMovies] = useState<Movie[]>([]);
+
+  const [search, setSearch] = useState("");
+  const [filtered, setFiltered] = useState<Movie[]>([]);
+  const [showDropdown, setShowDropdown] = useState(false);
+
+  const searchRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMovies = async () => {
@@ -18,19 +27,47 @@ export default function Home() {
       const currentSnap = await getDocs(currentQuery);
       const upcomingSnap = await getDocs(upcomingQuery);
 
-      setCurrentMovies(
-        currentSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Movie[]
-      );
-      setUpcomingMovies(
-        upcomingSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Movie[]
-      );
+      const curr = currentSnap.docs.map((d) => ({ id: d.id, ...d.data() })) as Movie[];
+      const upc = upcomingSnap.docs.map((d) => ({ id: d.id, ...d.data() })) as Movie[];
+
+      setCurrentMovies(curr);
+      setUpcomingMovies(upc);
+      setAllMovies([...curr, ...upc]);
     };
+
     fetchMovies();
+  }, []);
+
+  // Handle search
+  useEffect(() => {
+    if (search.trim() === "") {
+      setFiltered([]);
+      setShowDropdown(false);
+      return;
+    }
+
+    const results = allMovies.filter((m) =>
+      m.title.toLowerCase().includes(search.toLowerCase())
+    );
+
+    setFiltered(results.slice(0, 6)); // limit to 6 items
+    setShowDropdown(true);
+  }, [search, allMovies]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setShowDropdown(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   const pageStyle: React.CSSProperties = {
     minHeight: "100vh",
-    width: "100vw",
+    width: "98vw",
     padding: "20px",
     boxSizing: "border-box",
     backgroundColor: "#f5f5f5",
@@ -43,12 +80,26 @@ export default function Home() {
     margin: "30px 0",
     width: "100%",
     maxWidth: "1200px",
+    background: "#e9ecef",
+    padding: "20px",
+    borderRadius: "12px",
+  };
+
+  const headerRow: React.CSSProperties = {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
   };
 
   const titleStyle: React.CSSProperties = {
     fontSize: "28px",
     fontWeight: "bold",
-    marginBottom: "20px",
+  };
+
+  const viewAllStyle: React.CSSProperties = {
+    color: "#007bff",
+    cursor: "pointer",
+    fontSize: "16px",
   };
 
   const moviesRowStyle: React.CSSProperties = {
@@ -56,12 +107,75 @@ export default function Home() {
     flexWrap: "wrap",
     gap: "20px",
     justifyContent: "center",
+    marginTop: "20px",
   };
 
   return (
     <div style={pageStyle}>
+      {/* SEARCH BAR WITH DROPDOWN */}
+      <div ref={searchRef} style={{ width: "100%", maxWidth: "600px", position: "relative" }}>
+        <input
+          type="text"
+          placeholder="Search movies..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          style={{
+            width: "100%",
+            padding: "12px",
+            borderRadius: "6px",
+            border: "1px solid #ccc",
+            fontSize: "16px",
+          }}
+        />
+
+        {/* DROPDOWN */}
+        {showDropdown && filtered.length > 0 && (
+          <div
+            style={{
+              position: "absolute",
+              background: "white",
+              border: "1px solid #ccc",
+              borderRadius: "6px",
+              marginTop: "4px",
+              width: "100%",
+              zIndex: 10,
+              boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
+            }}
+          >
+            {filtered.map((m) => (
+              <div
+                key={m.id}
+                onClick={() => navigate(`/movie/${m.id}`)}
+                style={{
+                  padding: "10px",
+                  cursor: "pointer",
+                  borderBottom: "1px solid #f1f1f1",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                }}
+              >
+                <img
+                  src={m.posterUrl}
+                  alt={m.title}
+                  style={{ width: "40px", height: "60px", borderRadius: "4px" }}
+                />
+                {m.title}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      {/* CURRENT MOVIES */}
       <div style={sectionStyle}>
-        <h1 style={titleStyle}>Current Movies</h1>
+        <div style={headerRow}>
+          <h1 style={titleStyle}>Current Movies</h1>
+          <span style={viewAllStyle} onClick={() => navigate("/current")}>
+            View All
+          </span>
+        </div>
+
         <div style={moviesRowStyle}>
           {currentMovies.map((m) => (
             <MovieCard movie={m} key={m.id} />
@@ -69,8 +183,15 @@ export default function Home() {
         </div>
       </div>
 
+      {/* UPCOMING MOVIES */}
       <div style={sectionStyle}>
-        <h1 style={titleStyle}>Upcoming Movies</h1>
+        <div style={headerRow}>
+          <h1 style={titleStyle}>Upcoming Movies</h1>
+          <span style={viewAllStyle} onClick={() => navigate("/upcoming")}>
+            View All
+          </span>
+        </div>
+
         <div style={moviesRowStyle}>
           {upcomingMovies.map((m) => (
             <MovieCard movie={m} key={m.id} />

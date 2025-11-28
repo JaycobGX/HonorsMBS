@@ -8,15 +8,17 @@ export default function Reports() {
   const [revenue, setRevenue] = useState(0);
   const [playingMovies, setPlayingMovies] = useState<string[]>([]);
 
-  useEffect(()=> { fetchReport(); }, []);
+  useEffect(() => {
+    fetchReport();
+  }, []);
 
   const fetchReport = async () => {
-    // bookings collection
     const snap = await getDocs(collection(db, "bookings"));
     let sold = 0;
     let rev = 0;
-    snap.docs.forEach(d=>{
-      const b:any = d.data();
+
+    snap.docs.forEach((d) => {
+      const b: any = d.data();
       sold += Number(b.seats || 0);
       rev += Number(b.totalCost || 0);
     });
@@ -24,24 +26,83 @@ export default function Reports() {
     setTicketsSold(sold);
     setRevenue(rev);
 
-    // movies with status current
-    const msnap = await getDocs(query(collection(db, "movies"), where("status", "==", "current")));
-    setPlayingMovies(msnap.docs.map(d=>d.data().title || d.data().title));
+    const msnap = await getDocs(
+      query(collection(db, "movies"), where("status", "==", "current"))
+    );
+    setPlayingMovies(msnap.docs.map((d) => d.data().title));
+  };
+
+  const pageStyle: React.CSSProperties = {
+    padding: "30px",
+    maxWidth: "1000px",
+    margin: "0 auto",
+    display: "flex",
+    flexDirection: "column",
+    gap: "30px",
+  };
+
+  const cardGrid: React.CSSProperties = {
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+    gap: "20px",
+  };
+
+  const cardStyle: React.CSSProperties = {
+    background: "#fff",
+    borderRadius: "12px",
+    padding: "20px",
+    boxShadow: "0 3px 10px rgba(0,0,0,0.08)",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    textAlign: "center",
+  };
+
+  const containerStyle: React.CSSProperties = {
+    background: "#f3f3f3",
+    borderRadius: "12px",
+    padding: "20px",
+    boxShadow: "0 2px 6px rgba(0,0,0,0.06)",
   };
 
   return (
-    <div>
-      <h2>Status Reports</h2>
-      <div style={{display:"flex", gap:16}}>
-        <div style={{padding:12, borderRadius:8, background:"#fff"}}><h3>{ticketsSold}</h3><p>Tickets Sold</p></div>
-        <div style={{padding:12, borderRadius:8, background:"#fff"}}><h3>${revenue.toFixed(2)}</h3><p>Total Revenue</p></div>
+    <div style={pageStyle}>
+      <h2 style={{ fontSize: "28px", fontWeight: 600 }}>Status Reports</h2>
+
+      {/* Stats Cards */}
+      <div style={cardGrid}>
+        <div style={cardStyle}>
+          <h3 style={{ fontSize: "32px", margin: 0 }}>{ticketsSold}</h3>
+          <p style={{ margin: 0, marginTop: 6, fontSize: "16px" }}>
+            Tickets Sold
+          </p>
+        </div>
+
+        <div style={cardStyle}>
+          <h3 style={{ fontSize: "32px", margin: 0 }}>
+            ${revenue.toFixed(2)}
+          </h3>
+          <p style={{ margin: 0, marginTop: 6, fontSize: "16px" }}>
+            Total Revenue
+          </p>
+        </div>
       </div>
 
-      <div style={{marginTop:16}}>
-        <h3>Now Playing</h3>
-        <ul>
-          {playingMovies.map((t, i) => <li key={i}>{t}</li>)}
-        </ul>
+      {/* Upcoming / Current Movies Container */}
+      <div style={containerStyle}>
+        <h3 style={{ fontSize: "22px", marginBottom: "10px" }}>Now Playing</h3>
+
+        {playingMovies.length === 0 ? (
+          <p>No movies currently playing.</p>
+        ) : (
+          <ul style={{ paddingLeft: "20px", margin: 0 }}>
+            {playingMovies.map((title, index) => (
+              <li key={index} style={{ marginBottom: "6px" }}>
+                {title}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );

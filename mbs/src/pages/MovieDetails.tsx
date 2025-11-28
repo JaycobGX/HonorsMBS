@@ -86,7 +86,7 @@ export default function MovieDetails() {
   // Styles
   const pageStyle: React.CSSProperties = {
     minHeight: "100vh",
-    width: "100vw",
+    width: "98vw",
     padding: "20px",
     backgroundColor: "#f5f5f5",
     display: "flex",

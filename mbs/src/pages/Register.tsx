@@ -23,7 +23,7 @@ export default function Register() {
 
   const pageStyle: React.CSSProperties = {
     minHeight: "100vh",
-    width: "100vw",
+    width: "98vw",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
