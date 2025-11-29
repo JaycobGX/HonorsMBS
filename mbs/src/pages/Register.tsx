@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { register } from "../firebase/auth";
+import { useNavigate } from "react-router-dom";
 
 export default function Register() {
   const [fullName, setFullName] = useState("");
@@ -9,13 +10,17 @@ export default function Register() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  const navigate = useNavigate();
+
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
 
+    // register and sent to home page
     try {
       await register({ fullName, email, phone, address, password });
-      // optionally navigate to home page or login after registration
+      navigate("/");
+
     } catch (err: any) {
       setError(err.message);
     }

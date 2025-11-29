@@ -5,7 +5,7 @@ export default function Ticket() {
   const { id } = useParams<{ id: string }>();
 
   return (
-    <div style={{ padding: "20px", textAlign: "center" }}>
+    <div style={{  minHeight: "100vh", width: "98vw", padding: "20px", textAlign: "center" }}>
       <h1>Booking Ticket</h1>
       <p>Booking ID: {id}</p>
 

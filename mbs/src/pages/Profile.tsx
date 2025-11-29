@@ -129,8 +129,14 @@ export default function Profile() {
           placeholder="Full Name"
         />
 
-        <label>Email (cannot be changed)</label>
-        <input style={inputStyle} value={email} disabled placeholder="Email" />
+        <label>Email</label>
+        <input
+          style={inputStyle}
+          value={email} 
+          onChange={(e) =>
+            setUserData({ ...userData, email: e.target.value })
+          }
+          placeholder="Email" />
 
         <label>Phone Number</label>
         <input
@@ -152,12 +158,14 @@ export default function Profile() {
           placeholder="Address"
         />
 
-        <label>Password (cannot be changed here)</label>
+        <label>Password</label>
         <input
           style={inputStyle}
           type="password"
-          value="********"
-          disabled
+          value={userData.password}
+          onChange={(e) =>
+            setUserData({ ...userData, password: e.target.value })
+          }
           placeholder="Password"
         />
 
