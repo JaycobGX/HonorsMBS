@@ -4,16 +4,18 @@ import type { Movie } from "../types/Movie";
 import MovieCard from "../components/MovieCard";
 import { collection, getDocs, query, where } from "firebase/firestore";
 
+// holds the list of movies that are currently playing
 export default function CurrentMovies() {
   const [currentMovies, setCurrentMovies] = useState<Movie[]>([]);
 
+// get all the movies whose "status" field is set to "current"
   useEffect(() => {
     const fetchMovies = async () => {
       const moviesRef = collection(db, "movies");
 
-      const currentQuery = query(moviesRef, where("status", "==", "current"));
+      const currentQuery = query(moviesRef, where("status", "==", "current")); // builds a Firestore query that filters movies by status
 
-      const currentSnap = await getDocs(currentQuery);
+      const currentSnap = await getDocs(currentQuery); // get matching documents after running the query
 
       setCurrentMovies(
         currentSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() })) as Movie[]
@@ -22,6 +24,7 @@ export default function CurrentMovies() {
     fetchMovies();
   }, []);
 
+// layout styling for the full page
   const pageStyle: React.CSSProperties = {
     minHeight: "100vh",
     width: "98vw",
@@ -38,13 +41,14 @@ export default function CurrentMovies() {
     width: "100%",
     maxWidth: "1200px",
   };
-
+// Heading style for the page title
   const titleStyle: React.CSSProperties = {
     fontSize: "28px",
     fontWeight: "bold",
     marginBottom: "20px",
   };
 
+// grid layout for displaying movie cards side-by-side
   const moviesRowStyle: React.CSSProperties = {
     display: "flex",
     flexWrap: "wrap",

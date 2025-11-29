@@ -2,7 +2,7 @@ import { useParams, Link } from "react-router-dom";
 import { QRCodeCanvas } from "qrcode.react";
 
 export default function Ticket() {
-  const { id } = useParams<{ id: string }>();
+  const { id } = useParams<{ id: string }>(); // get the booking ID from the URL
 
   return (
     <div style={{ minHeight: "100vh", width: "98vw", padding: "20px", textAlign: "center" }}>

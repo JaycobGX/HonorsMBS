@@ -3,20 +3,23 @@ import { useEffect, useState } from "react";
 import { collection, query, where, getDocs } from "firebase/firestore";
 import { db } from "../../firebase/db";
 
+// Stats
 export default function Reports() {
   const [ticketsSold, setTicketsSold] = useState(0);
   const [revenue, setRevenue] = useState(0);
   const [playingMovies, setPlayingMovies] = useState<string[]>([]);
 
   useEffect(() => {
-    fetchReport();
+    fetchReport(); // load stats on page load
   }, []);
 
+// get all bookings
   const fetchReport = async () => {
     const snap = await getDocs(collection(db, "bookings"));
     let sold = 0;
     let rev = 0;
 
+// Sum seats + totalCost from each booking document
     snap.docs.forEach((d) => {
       const b: any = d.data();
       sold += Number(b.seats || 0);
@@ -25,11 +28,11 @@ export default function Reports() {
 
     setTicketsSold(sold);
     setRevenue(rev);
-
+//Get all movies with status = "current"
     const msnap = await getDocs(
       query(collection(db, "movies"), where("status", "==", "current"))
     );
-    setPlayingMovies(msnap.docs.map((d) => d.data().title));
+    setPlayingMovies(msnap.docs.map((d) => d.data().title)); // Get list of movie titles that are currently playing
   };
 
   const pageStyle: React.CSSProperties = {

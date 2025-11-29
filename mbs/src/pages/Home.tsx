@@ -5,21 +5,23 @@ import MovieCard from "../components/MovieCard";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { useNavigate } from "react-router-dom";
 
+// Separate lists for current, upcoming, and all movies which will be used for search
 export default function Home() {
   const [currentMovies, setCurrentMovies] = useState<Movie[]>([]);
   const [upcomingMovies, setUpcomingMovies] = useState<Movie[]>([]);
   const [allMovies, setAllMovies] = useState<Movie[]>([]);
 
+  // Search input and filtered dropdown results
   const [search, setSearch] = useState("");
   const [filtered, setFiltered] = useState<Movie[]>([]);
   const [showDropdown, setShowDropdown] = useState(false);
 
-  const searchRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null); // used to detect clicks outside of the dropdown
   const navigate = useNavigate();
 
   useEffect(() => {
     const fetchMovies = async () => {
-      const moviesRef = collection(db, "movies");
+      const moviesRef = collection(db, "movies"); // get both current and upcoming movies from Firestore
 
       const currentQuery = query(moviesRef, where("status", "==", "current"));
       const upcomingQuery = query(moviesRef, where("status", "==", "upcoming"));
@@ -32,7 +34,7 @@ export default function Home() {
 
       setCurrentMovies(curr);
       setUpcomingMovies(upc);
-      setAllMovies([...curr, ...upc]);
+      setAllMovies([...curr, ...upc]); // store all movies for search functionality
     };
 
     fetchMovies();
@@ -48,9 +50,9 @@ export default function Home() {
 
     const results = allMovies.filter((m) =>
       m.title.toLowerCase().includes(search.toLowerCase())
-    );
+    ); // Filter movie titles by user input
 
-    setFiltered(results.slice(0, 6)); // limit to 6 items
+    setFiltered(results.slice(0, 6)); // limit to 6 items to avoid a huge dropdown
     setShowDropdown(true);
   }, [search, allMovies]);
 

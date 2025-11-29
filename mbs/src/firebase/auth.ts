@@ -10,7 +10,7 @@ export const auth = getAuth(app);
 export const login = (email: string, password: string) =>
   signInWithEmailAndPassword(auth, email, password);
 
-// Logout
+// Regular Logout
 export const logout = () => signOut(auth);
 
 // Register a new user and store extra info in Firestore
@@ -31,9 +31,10 @@ export async function register({
   password,
   isAdmin = false,
 }: RegisterData): Promise<User> {
-  const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+  const userCredential = await createUserWithEmailAndPassword(auth, email, password); 
   const user = userCredential.user;
 
+// Store the user's extra details in Firestore
   await setDoc(doc(db, "users", user.uid), {
     fullName,
     email,
@@ -47,7 +48,7 @@ export async function register({
 }
 
 
-// Get user info including admin status
+// Get user info including admin status based on their UID
 export async function getUserData(uid: string) {
   const docSnap = await getDoc(doc(db, "users", uid));
   if (!docSnap.exists()) return null;

@@ -7,17 +7,18 @@ export default function Register() {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(""); // store any registration errors
 
+// called when user submits the registration form
   const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
+    e.preventDefault();  // prevent page reload
+    setError(""); // reset any previous errors
 
     try {
       await register({ fullName, email, phone, address, password });
       // optionally navigate to home page or login after registration
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message); // display error message if registration fails
     }
   };
 

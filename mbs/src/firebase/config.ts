@@ -9,5 +9,7 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
+//Initialize and export the main Firebase application instance which other
+//Firebase services like Auth, Firestore, and Storage will use as their core reference.
 export const app = initializeApp(firebaseConfig);
 

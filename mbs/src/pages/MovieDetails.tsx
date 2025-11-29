@@ -13,11 +13,11 @@ import { getAuth } from "firebase/auth";
 import type { Movie } from "../types/Movie";
 
 export default function MovieDetails() {
-  const { id } = useParams<{ id: string }>();
-  const [movie, setMovie] = useState<Movie | null>(null);
-  const [reviews, setReviews] = useState<any[]>([]);
+  const { id } = useParams<{ id: string }>(); // Get movie ID from URL
+  const [movie, setMovie] = useState<Movie | null>(null); // Movie details state
+  const [reviews, setReviews] = useState<any[]>([]); // Reviews state
   const [reviewText, setReviewText] = useState("");
-  const [rating, setRating] = useState(5);
+  const [rating, setRating] = useState(5); // Controlled input for rating (1-5)
   const navigate = useNavigate();
   const auth = getAuth();
 
@@ -37,12 +37,12 @@ export default function MovieDetails() {
     fetchMovie();
   }, [id]);
 
-  // Fetch reviews live
+  // Fetch reviews live using Firestore onSnapshot
   useEffect(() => {
     if (!id) return;
 
     const reviewsRef = collection(db, "movies", id, "reviews");
-
+// Firestore real-time listener
     const unsubscribe = onSnapshot(reviewsRef, (snapshot) => {
       const fetched = snapshot.docs.map((d) => ({
         id: d.id,
@@ -51,15 +51,15 @@ export default function MovieDetails() {
       setReviews(fetched);
     });
 
-    return () => unsubscribe();
+    return () => unsubscribe(); // Clean up listener on unmount
   }, [id]);
 
-  if (!movie) return <p>Loading...</p>;
-
+  if (!movie) return <p>Loading...</p>; // Show loading if movie data isn't ready
+ // Navigate to booking page for this movie
   const handleBookTickets = () => {
     navigate(`/booking/${movie.id}`);
   };
-
+ // Submit a review to Firestore
   const submitReview = async () => {
     const user = auth.currentUser;
     if (!user) {
@@ -71,7 +71,7 @@ export default function MovieDetails() {
       alert("Review cannot be empty.");
       return;
     }
-
+//add a new review to Firestore under this movie
     await addDoc(collection(db, "movies", movie.id!, "reviews"), {
       user: user.email,
       rating,

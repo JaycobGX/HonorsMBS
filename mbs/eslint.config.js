@@ -1,9 +1,9 @@
-import js from '@eslint/js'
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import tseslint from 'typescript-eslint'
-import { defineConfig, globalIgnores } from 'eslint/config'
+import js from '@eslint/js' // Core JS rules
+import globals from 'globals' // Predefined global variables
+import reactHooks from 'eslint-plugin-react-hooks' // Hooks rules for React
+import reactRefresh from 'eslint-plugin-react-refresh' // Vite + React refresh rules
+import tseslint from 'typescript-eslint' // TypeScript-specific rules
+import { defineConfig, globalIgnores } from 'eslint/config' // ESLint helper functions
 
 export default defineConfig([
   globalIgnores(['dist']),

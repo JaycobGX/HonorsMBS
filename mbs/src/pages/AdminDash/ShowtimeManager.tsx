@@ -11,34 +11,34 @@ import {
 import { db } from "../../firebase/db";
 
 export default function ShowtimesManager() {
-  const [movies, setMovies] = useState<any[]>([]);
-  const [showtimes, setShowtimes] = useState<any[]>([]);
-  const [editing, setEditing] = useState<any>(null);
-
+  const [movies, setMovies] = useState<any[]>([]); // all movies from Firestore
+  const [showtimes, setShowtimes] = useState<any[]>([]); // all showtimes from Firestore
+  const [editing, setEditing] = useState<any>(null); // holds the showtime currently being edited or the ones that is null
+// load data when the page mounts
   useEffect(() => {
     fetchMovies();
     fetchShowtimes();
   }, []);
-
+ // get all movie documents
   const fetchMovies = async () => {
     const snap = await getDocs(collection(db, "movies"));
     setMovies(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
   };
-
+// get all showtime documents
   const fetchShowtimes = async () => {
     const snap = await getDocs(collection(db, "showtimes"));
     setShowtimes(snap.docs.map((d) => ({ id: d.id, ...d.data() })));
   };
-
+// add a new showtime
   const createShowtime = async (s: any) => {
     await addDoc(collection(db, "showtimes"), {
       ...s,
       createdAt: new Date().toISOString(),
     });
-    fetchShowtimes();
+    fetchShowtimes(); // refresh list
     setEditing(null);
   };
-
+// update an existing showtime
   const updateShowtime = async (s: any) => {
     if (!s.id) return;
     await updateDoc(doc(db, "showtimes", s.id), {
@@ -48,7 +48,7 @@ export default function ShowtimesManager() {
     fetchShowtimes();
     setEditing(null);
   };
-
+// delete a showtime
   const removeShowtime = async (id?: string) => {
     if (!id) return;
     if (!confirm("Delete showtime?")) return;
@@ -137,7 +137,7 @@ function ShowtimeForm({ movies, initial, onSave, onCancel }: any) {
       total_seats: 0,
     }
   );
-
+// update inputs when switching from "create" to "edit"
   useEffect(() => {
     if (initial) setState(initial);
   }, [initial]);
