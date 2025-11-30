@@ -104,6 +104,7 @@ export default function BookingPage() {
     <div
       style={{
         minHeight: "100vh",
+        width: "98vw",
         padding: "30px",
         backgroundColor: "#f5f5f5",
         display: "flex",
