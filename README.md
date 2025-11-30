@@ -11,7 +11,7 @@ npm -v (cmd prompt)
 ### 'Git (https://git-scm.com/install/windows)
 
 To Verify Installation:\
-git –version (cmd prompt)
+git –-version (cmd prompt)
 
 ## HOW TO DOWNLOAD PROJECT
 
