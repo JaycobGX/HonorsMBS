@@ -4,9 +4,12 @@ export default function ConfirmationPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
+// pulls the booking details passed in from the payment page and in case
+// if nothing was sent, fall back to an empty object so the app doesn't break.
   const bookingData = location.state || {};
   const { movieTitle, theater, showtime, seats, totalCost } = bookingData;
 
+//the main outer container styling for full-screen centered layout
   const containerStyle: React.CSSProperties = {
     minHeight: "100vh",
     display: "flex",
@@ -17,7 +20,7 @@ export default function ConfirmationPage() {
     padding: "24px",
     textAlign: "center",
   };
-
+// card wrapper that holds all confirmation text and actions
   const cardStyle: React.CSSProperties = {
     background: "white",
     padding: "32px",
@@ -37,6 +40,7 @@ export default function ConfirmationPage() {
     cursor: "pointer",
   };
 
+// Button that sends the user back to the homepage
   const homeButtonStyle: React.CSSProperties = {
     ...buttonStyle,
     backgroundColor: "#2563eb",

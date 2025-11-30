@@ -4,17 +4,17 @@ import { Link, useNavigate } from "react-router-dom";
 
 export default function Login() {
   const navigate = useNavigate();
-
+// Form state
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
+// Handle form submission
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
+    setError(""); // Reset previous error
 
     try {
-      await login(email, password);
+      await login(email, password); // Call Firebase login
 
       // popup
       alert("Login Successful!");

@@ -1,3 +1,4 @@
+
 // src/pages/admin/AdminDashboard.tsx
 import { useEffect, useState } from "react";
 import { auth } from "../../firebase/auth";
@@ -7,11 +8,17 @@ import ShowtimesManager from "./ShowtimeManager";
 import Reports from "./Reports";
 import { getDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase/db";
-
+/**
+ * AdminDashboard : Main admin panel that controls access to three management sections:
+ * - Manage Movies
+ * - Manage Showtimes
+ * - Status Reports
+ * the access is restricted to authenticated users with `isAdmin = true` in their Firestore user document.
+ */
 export default function AdminDashboard() {
   const navigate = useNavigate();
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [page, setPage] = useState<"movies" | "showtimes" | "reports">("movies");
+  const [isAdmin, setIsAdmin] = useState(false); //checks if the authenticated user is confirmed as an admin
+  const [page, setPage] = useState<"movies" | "showtimes" | "reports">("movies"); //controls which admin section is currently displayed
 
   // --- Inline Styles ---
   const container: React.CSSProperties = {
@@ -46,7 +53,7 @@ export default function AdminDashboard() {
     cursor: "pointer",
     fontWeight: "bold"
   };
-
+ //darker style applied to the tab that is currently active
   const activeButton: React.CSSProperties = {
     ...buttonStyle,
     backgroundColor: "#0056b3",
@@ -55,11 +62,12 @@ export default function AdminDashboard() {
   useEffect(() => {
     const check = async () => {
       const u = auth.currentUser;
+      // if no user logged in then it redirects to login page
       if (!u) {
         navigate("/login");
         return;
       }
-
+      // get user metadata from Firestore
       const snap = await getDoc(doc(db, "users", u.uid));
       const data = snap.data();
       

@@ -10,6 +10,7 @@ import {
   getDocs,
 } from "firebase/firestore";
 
+// a single showtime entry from Firestore
 type Showtime = {
   id: string;
   movie_id: string;
@@ -19,11 +20,12 @@ type Showtime = {
 };
 
 export default function BookingPage() {
-  const { id } = useParams<{ id: string }>(); // movie id
+  const { id } = useParams<{ id: string }>(); // movie ID from the URL
   const navigate = useNavigate();
 
-  const [movieTitle, setMovieTitle] = useState("");
-  const [showtimes, setShowtimes] = useState<Showtime[]>([]);
+  const [movieTitle, setMovieTitle] = useState(""); // Movie title that is displayed at the top
+  const [showtimes, setShowtimes] = useState<Showtime[]>([]); // All available showtimes for this movie
+  // User selections
   const [selectedTheater, setSelectedTheater] = useState("");
   const [selectedShowtime, setSelectedShowtime] = useState("");
   const [ticketPrice, setTicketPrice] = useState(0);
@@ -32,13 +34,13 @@ export default function BookingPage() {
   useEffect(() => {
     if (!id) return;
 
-    // Fetch movie
+    // Fetch movie and showtimes when the page loads
     const fetchMovie = async () => {
       const snap = await getDoc(doc(db, "movies", id));
       if (snap.exists()) setMovieTitle(snap.data().title);
     };
 
-    // Fetch showtimes
+    // Fetch all showtimes that belong to this movie
     const fetchShowtimes = async () => {
       const q = query(collection(db, "showtimes"), where("movie_id", "==", id));
       const querySnapshot = await getDocs(q);
@@ -46,6 +48,7 @@ export default function BookingPage() {
       const shows: Showtime[] = [];
       querySnapshot.forEach((docSnap) => {
         const data = docSnap.data() as Showtime;
+        // pushes each showtime into a clean array
         shows.push({
           id: docSnap.id,
           movie_id: data.movie_id,
@@ -66,7 +69,7 @@ export default function BookingPage() {
   const onTheaterChange = (theater: string) => {
     setSelectedTheater(theater);
 
-    // Reset showtime + price when theater changes
+    // When the theater changes, reset the selected showtime and price
     setSelectedShowtime("");
     setTicketPrice(0);
   };
@@ -81,7 +84,8 @@ export default function BookingPage() {
 
     if (selected) setTicketPrice(selected.ticket_price);
   };
-
+  
+// When user clicks "Confirm & Pay", send booking info to Payment page
   const handleConfirm = () => {
     navigate("/payment", {
       state: {

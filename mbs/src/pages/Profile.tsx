@@ -23,25 +23,25 @@ type Booking = {
 };
 
 export default function Profile() {
-  const [userData, setUserData] = useState<any>(null);
-  const [bookings, setBookings] = useState<Booking[]>([]);
+  const [userData, setUserData] = useState<any>(null); // store user's profile info
+  const [bookings, setBookings] = useState<Booking[]>([]); // user's booking history
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  const uid = auth.currentUser?.uid;
-  const email = auth.currentUser?.email || "";
+  const uid = auth.currentUser?.uid; // current user ID
+  const email = auth.currentUser?.email || ""; // user's email :readonly
 
+// Fetch user profile and booking history 
   useEffect(() => {
     if (!uid) return;
-
+// Get user data from 'users' collection
     const fetchProfile = async () => {
       try {
-        // Fetch user info
         const userRef = doc(db, "users", uid);
         const userSnap = await getDoc(userRef);
         if (userSnap.exists()) setUserData(userSnap.data());
 
-        // Fetch bookings from top-level collection
+        // Get user's bookings from 'bookings' collection
         const bookingQuery = query(
           collection(db, "bookings"),
           where("userId", "==", uid)
@@ -52,7 +52,7 @@ export default function Profile() {
         for (const b of bookingSnap.docs) {
           const bookingData = b.data() as Booking;
 
-          // Fetch movie data
+         // Fetch movie details for each booking
           if (bookingData.movieId) {
             const movieSnap = await getDoc(doc(db, "movies", bookingData.movieId));
             if (movieSnap.exists()) {
@@ -65,7 +65,7 @@ export default function Profile() {
           bookingList.push({ ...bookingData, id: b.id });
         }
 
-        setBookings(bookingList);
+        setBookings(bookingList); // update bookings state
       } catch (err) {
         console.error("Error fetching profile:", err);
       } finally {
@@ -76,8 +76,8 @@ export default function Profile() {
     fetchProfile();
   }, [uid]);
 
-  if (loading) return <p>Loading...</p>;
-
+  if (loading) return <p>Loading...</p>; // show this message while fetching data
+// Update user's profile in Firestore
   const updateProfile = async () => {
     if (!uid) return;
     try {

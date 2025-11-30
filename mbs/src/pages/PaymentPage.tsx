@@ -8,11 +8,12 @@ export default function PaymentPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
+// Get booking data passed from previous page like Home or MovieDetails
   const bookingData = location.state || {};
   console.log("PAYMENT PAGE DATA →", bookingData);
 
   const { movieTitle, theater, showtime, seats = 1, total } = bookingData;
-
+ // Calculate seat count, price per seat, and total cost
   const seatCount = Number(seats) || 1;
   const pricePerSeat = total && seatCount ? total / seatCount : 0;
   const totalCost = total || seatCount * pricePerSeat;
@@ -22,17 +23,17 @@ export default function PaymentPage() {
   const [paypalEmail, setPaypalEmail] = useState("");
   const [venmoUser, setVenmoUser] = useState("");
   const [loading, setLoading] = useState(false);
-
+// Handle payment submission
   const handlePayment = async () => {
     if (!auth.currentUser) {
       alert("You must be logged in to book tickets!");
-      return;
+      return; // Ensure user is logged in
     }
 
     setLoading(true);
 
     try {
-      // Create a new booking in Firestore
+      // // Create a new booking document in Firestore
       const bookingRef = await addDoc(collection(db, "bookings"), {
         userId: auth.currentUser.uid,
         movieTitle,
@@ -46,7 +47,7 @@ export default function PaymentPage() {
       });
 
       console.log("Booking created with ID:", bookingRef.id);
-
+// Navigate to confirmation page and pass booking data
       navigate("/confirmation", {
         state: {
           movieTitle,

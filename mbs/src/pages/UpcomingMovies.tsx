@@ -5,13 +5,14 @@ import MovieCard from "../components/MovieCard";
 import { collection, getDocs, query, where } from "firebase/firestore";
 
 export default function UpcomingMovies() {
-  const [upcomingMovies, setUpcomingMovies] = useState<Movie[]>([]);
+  const [upcomingMovies, setUpcomingMovies] = useState<Movie[]>([]); // the staet to store the list of upcoming movies
 
+  // Fetch upcoming movies from Firestore
   useEffect(() => {
     const fetchMovies = async () => {
       const moviesRef = collection(db, "movies");
 
-      const upcomingQuery = query(moviesRef, where("status", "==", "upcoming"));
+      const upcomingQuery = query(moviesRef, where("status", "==", "upcoming")); // get only movies with status "upcoming"
 
       const upcomingSnap = await getDocs(upcomingQuery);
 

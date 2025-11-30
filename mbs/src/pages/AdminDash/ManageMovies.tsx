@@ -1,4 +1,12 @@
 // src/pages/admin/ManageMovies.tsx
+/**
+ * ManageMovies Component: handles CRUD operations for movies in the admin dashboard that allows admins to:
+ *  - View all stored movies
+ *  - Create new movies
+ *  - Edit existing movies
+ *  - Delete movies
+ */
+
 import { useEffect, useState } from "react";
 import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from "firebase/firestore";
 import { db } from "../../firebase/db";
@@ -19,6 +27,7 @@ export default function ManageMovies() {
   const [movies, setMovies] = useState<MovieForm[]>([]);
   const [editing, setEditing] = useState<MovieForm | null>(null);
 
+//Fetches all movies from Firestore and maps
   const fetchMovies = async () => {
     const snap = await getDocs(collection(db, "movies"));
     setMovies(snap.docs.map(d => ({ id: d.id, ...(d.data() as any) })));
@@ -26,19 +35,20 @@ export default function ManageMovies() {
 
   useEffect(() => { fetchMovies(); }, []);
 
+//Creates a new movie entry in Firestore and automatically refreshe the movie list afterward.
   const createMovie = async (m: MovieForm) => {
     await addDoc(collection(db, "movies"), { ...m, createdAt: new Date().toISOString() });
     fetchMovies();
     setEditing(null);
   };
-
+//Saves updates to an existing movie where the movie must contain an `id` so that Firestore knows which document to update.
   const updateMovie = async (m: MovieForm) => {
     if (!m.id) return;
     await updateDoc(doc(db, "movies", m.id), { ...m, updatedAt: new Date().toISOString() });
     fetchMovies();
     setEditing(null);
   };
-
+//Deletes a movie from Firestore after a confirmation prompt
   const removeMovie = async (id?: string) => {
     if (!id) return;
     if (!confirm("Delete movie?")) return;
@@ -72,7 +82,8 @@ export default function ManageMovies() {
   );
 }
 
-// small form component
+// small form component for creating a new movie editing an existing movie
+//If editing an existing movie, it preloads fields else, it starts with default empty values
 function MovieForm({ initial, onSave, onCancel }: { initial?: any, onSave: (m:any)=>Promise<void>, onCancel?: ()=>void }) {
   const [form, setForm] = useState<any>(initial || {
     title: "", description: "", genre: "", duration: "", cast: "", posterUrl: "", status: "current"

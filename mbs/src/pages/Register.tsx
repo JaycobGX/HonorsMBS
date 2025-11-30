@@ -12,9 +12,10 @@ export default function Register() {
 
   const navigate = useNavigate();
 
+// called when user submits the registration form
   const handleRegister = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError("");
+    e.preventDefault();  // prevent page reload
+    setError(""); // reset any previous errors
 
     // register and sent to home page
     try {
@@ -22,7 +23,7 @@ export default function Register() {
       navigate("/");
 
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message); // display error message if registration fails
     }
   };
 

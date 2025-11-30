@@ -1,3 +1,6 @@
+//Displays navigation links, uses Firebase authentication to determine whether a user is logged in, 
+// and optionally shows admin-only links.
+
 import { Link } from "react-router-dom";
 import { auth, logout, getUserData } from "../firebase/auth";
 import { useAuthState } from "react-firebase-hooks/auth";
@@ -5,8 +8,12 @@ import { useEffect, useState } from "react";
 
 export default function Navbar() {
   const [user] = useAuthState(auth);
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false); // checks whether the current user has admin privileges
 
+  //Check user role status whenever the user changes.
+  //If a user is logged in, it fetches their Firestore user document
+  //and also updates `isAdmin` based on the stored data.
+  
   useEffect(() => {
     if (user) {
       getUserData(user.uid).then((data: any) => {
